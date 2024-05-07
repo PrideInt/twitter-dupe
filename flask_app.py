@@ -93,6 +93,37 @@ def post():
 
     return { 'results': 'OK' }
 
+@app.route('/final/thread-delete', methods=['POST'])
+def delete_thread():
+    id = request.form.get("id")
+
+    table = get_table("threads")
+    items = table.scan()['Items']
+
+    replies = []
+    likes = table.get_item(Key = { "id": id })["Item"]["likes"]
+
+    table.delete_item(Key = { "id": id })
+
+    for i in range(len(items)):
+        thread = items[i]
+        replies = thread["replies"]
+
+        map = { "id": id }
+
+        if map in replies:
+            replies.remove(map)
+            data = { 'id': thread["id"], 'content': thread["content"], 'display_name': thread["display_name"], 'liked_by': thread["liked_by"], 'likes': thread["likes"], 'pfp': thread["pfp"], 'source': thread["source"], 'username': thread["username"], 'replies': replies, 'reply_to': thread["reply_to"], 'date_posted': thread["date_posted"] }
+            table.put_item(Item = data)
+            break
+
+    members = get_table("members")
+    member = members.get_item(Key = { "username": session["username"] })['Item']
+    member_data = { 'username': member["username"], 'banner': member["banner"], 'date_joined': member["date_joined"], 'display_name': member["display_name"], 'engagement': member["engagement"], 'likes': int(member["likes"]) - int(likes), 'posts': member["posts"] - 1, 'pfp': member["pfp"], 'password': member["password"] }
+    members.put_item(Item = member_data)
+
+    return { 'results': 'OK' }
+
 @app.route('/final/signup/<username>/<password>')
 def handle_signup(username, password):
     table = get_table('members')

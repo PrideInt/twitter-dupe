@@ -254,6 +254,12 @@ const renderReplies = (response) => {
 
     replySection.innerHTML = replySectionDiv;
 
+    const deleteButton = document.getElementById("delete_button");
+
+    let deleteButtonDiv = `<button class="signup_button" onClick="deleteThread('${opId}')" style="width: 5%; height: 3%; background-color: #664248; color: black; border-color: #8c5b57; float: right; margin-right: 30px; margin-top: 20px;">Delete</button>`;
+
+    deleteButton.innerHTML = deleteButtonDiv;
+
     let opAttachmentDiv = "";
     if (opAttachment != "0") {
         opAttachmentDiv = `<img class="attachment" src="${opAttachment}"></img>`;
@@ -365,6 +371,20 @@ const addReply = (id) => {
     formData.append("op_id", id)
     formData.append("attachment", document.getElementById('reply_attach_button').files[0]);
     formData.append("content", document.getElementById('reply_content').value)
+
+    xhttp.send(formData);
+}
+
+const deleteThread = (id) => {
+    let xhttp = new XMLHttpRequest();
+    xhttp.onload = () => {
+        if (xhttp.status == 200) {
+            redirect('/profile');
+        }
+    }
+    xhttp.open('POST', '/final/thread-delete', true);
+    var formData = new FormData();
+    formData.append("id", id)
 
     xhttp.send(formData);
 }
