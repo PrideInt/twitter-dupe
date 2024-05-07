@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./final_home_files/styles.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com/">
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+        <link rel="stylesheet" href="/static/styles.css">
+        <title>FINAL: HOME</title>
+    </head>
+    <body>
+        <div>
+            <center>
+                <div class="site_banner">
+                    <div class="banner" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Vincent_van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1200px-Vincent_van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg');"></div>
+                </div>
+                <h1>TIMELINE</h1>
+                <br>
+            </center>
+
+            <div class="sidebar">
+                <ol>
+                    <li class="sidebar_selection"><a href="/home"><h1>HOME</h1></a></li>
+                    <div class="hor_line"></div>
+                    <li class="sidebar_selection"><a href="/profile"><h1>PROFILE</h1></a></li>
+                    <div class="hor_line"></div>
+                    <li class="sidebar_selection"><a href="/settings"><h1>SETTINGS</h1></a></li>
+                    <div class="hor_line"></div>
+                    <li class="sidebar_selection"><a href="/logout"><h1>LOGOUT</h1></a></li>
+                </ol>
+            </div>
+
+            <div class="miscellaneous" id="miscellaneous">
+            </div>
+
+            <div class="home_tweet">
+                <h2 style="margin-left: 30px">Share your thoughts:</h2>
+
+                <input class="home_tweet_content" id="home_tweet_content">
+                <input class="attach_button" id="attach_button" type="file"></input>
+                <button class="home_tweet_button" id="home_tweet_button" onClick="post();">Tweet</button>
+            </div>
+
+            <div class="timeline" id="timeline">
+
+            </div>
+        </div>
+    </body>
+
+    <script src="/static/script.js"></script>
+    <script>
+        timeline();
+        doGetSuperPopMembers();
+    </script>
+</html>

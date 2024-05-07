@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./final_home_files/styles.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com/">
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+        <link rel="stylesheet" href="/static/styles.css">
+        <title>FINAL: PROFILE SETTINGS</title>
+    </head>
+    <body>
+        <div>
+            <center>
+                <div class="profile_banner" id="profile_banner" style="position: absolute;">
+                </div>
+                <br>
+            </center>
+
+            <div class="profile_details" id="profile_details">
+            </div>
+
+            <div class="sidebar" style="margin-top: 650px;">
+                <ol>
+                    <li class="sidebar_selection"><a href="/home"><h1>HOME</h1></a></li>
+                    <div class="hor_line"></div>
+                    <li class="sidebar_selection"><a href="/profile"><h1>PROFILE</h1></a></li>
+                    <div class="hor_line"></div>
+                    <li class="sidebar_selection"><a href="/settings"><h1>SETTINGS</h1></a></li>
+                    <div class="hor_line"></div>
+                    <li class="sidebar_selection"><a href="/logout"><h1>LOGOUT</h1></a></li>
+                </ol>
+            </div>
+
+            <center>
+                <div class="settings_box" style="margin-top: 400px; margin-left: 300px;">
+                    <h1>SETTINGS</h1>
+                    <br>
+                    <h2>Change Profile Picture</h2>
+                    <input class="attach_button" id="change_pfp" type="file"></input>
+                    <button class="signup_button" onClick="uploadProfilePicture();" style="width: 15%; height: 3%;">Upload</button>
+                    <br><br>
+                    <h2>Change Banner</h2>
+                    <input class="attach_button" id="change_banner" type="file"></input>
+                    <button class="signup_button" onClick="uploadBanner();" style="width: 15%; height: 3%;">Upload</button>
+                    <br><br>
+                    <h2>Change Display Name</h2>
+                    <input class="signup_container" id="change_display_name" placeholder="Display Name"></input>
+                    <br><br>
+                    <h2>Change Username</h2>
+                    <input class="signup_container" id="change_username" placeholder="Username"></input>
+                    <br><br>
+                    <h2>Change Password</h2>
+                    <input class="signup_container" id="change_password" placeholder="Password"></input>
+                    <br>
+                    <br>
+                    <br>
+                    <button class="signup_button" onClick="applyChanges();" style="width: 35%; height: 5%;">Save Changes</button>
+                    <br><br><br>
+                </div>
+            </center>
+        </div>
+    </body>
+    
+    <script src="/static/script.js"></script>
+    <script>
+        doRenderProfile();
+    </script>
+</html>
