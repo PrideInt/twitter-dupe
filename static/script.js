@@ -133,7 +133,7 @@ const renderProfile = (response) => {
         let information = "";
 
         information += "<div style=\"display: inline-block;\">" +
-                            "<center><h1 style=\"margin-left: 100px; margin-right: 100px;\">TWEETS</h1></center>" +
+                            "<center><h1 style=\"margin-left: 100px; margin-right: 100px;\">THREADS</h1></center>" +
                             "<center><h1 id=\"tweets\" style=\"margin-left: 100px; margin-right: 100px;\">" + posts + "</h1></center>" +
                         "</div>" +
 
