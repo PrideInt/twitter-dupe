@@ -85,7 +85,7 @@ def post():
     likes = 0
     posts = int(item["posts"]) + 1
 
-    data = { 'id': str(uuid.uuid4()), 'username': username, 'display_name': display_name, 'pfp': pfp, 'content': content, 'likes': likes, 'liked_by': [], 'source': source, 'replies': [], 'reply_to': 'None', 'date_posted': get_date() }
+    data = { 'id': str(uuid.uuid4()), 'username': username, 'display_name': display_name, 'pfp': pfp, 'content': content, 'likes': likes, 'liked_by': [], 'source': source, 'replies': [], 'reply_to': 'None', 'date_posted': get_date(), 'parent': 'None' }
     table.put_item(Item = data)
 
     member_data = { 'username': item["username"], 'banner': item["banner"], 'date_joined': item["date_joined"], 'display_name': item["display_name"], 'engagement': item["engagement"], 'likes': item["likes"], 'posts': posts, 'pfp': item["pfp"], 'password': item["password"] }
@@ -113,7 +113,7 @@ def delete_thread():
 
         if map in replies:
             replies.remove(map)
-            data = { 'id': thread["id"], 'content': thread["content"], 'display_name': thread["display_name"], 'liked_by': thread["liked_by"], 'likes': thread["likes"], 'pfp': thread["pfp"], 'source': thread["source"], 'username': thread["username"], 'replies': replies, 'reply_to': thread["reply_to"], 'date_posted': thread["date_posted"] }
+            data = { 'id': thread["id"], 'content': thread["content"], 'display_name': thread["display_name"], 'liked_by': thread["liked_by"], 'likes': thread["likes"], 'pfp': thread["pfp"], 'source': thread["source"], 'username': thread["username"], 'replies': replies, 'reply_to': thread["reply_to"], 'date_posted': thread["date_posted"], 'parent': thread["parent"] }
             table.put_item(Item = data)
             break
 
@@ -249,11 +249,17 @@ def apply_changes():
     if req_display_name != '':
         display_name = req_display_name
 
+        if len(req_display_name) > 30:
+            display_name = display_name[:30]
+
     if req_password != '':
         password = req_password
 
     if req_username != '':
         username = req_username
+
+        if len(req_username) > 20:
+            username = username[:20]
 
     table.delete_item(Key = { "username": session["username"] })
     session["username"] = username
@@ -267,7 +273,7 @@ def apply_changes():
     for i in range(len(items)):
         if items[i]['username'] == prev_username:
             thread = items[i]
-            thread_data = { 'id': thread["id"], 'username': username, 'display_name': display_name, 'pfp': thread["pfp"], 'content': thread["content"], 'likes': thread["likes"], 'liked_by': thread["liked_by"], 'source': thread["source"], 'replies': thread["replies"], 'reply_to': thread["reply_to"], 'date_posted': thread["date_posted"] }
+            thread_data = { 'id': thread["id"], 'username': username, 'display_name': display_name, 'pfp': thread["pfp"], 'content': thread["content"], 'likes': thread["likes"], 'liked_by': thread["liked_by"], 'source': thread["source"], 'replies': thread["replies"], 'reply_to': thread["reply_to"], 'date_posted': thread["date_posted"], 'parent': thread["parent"] }
             threads.put_item(Item = thread_data)
 
     return { 'results': 'OK' }
@@ -318,16 +324,20 @@ def get_threads_by_username(username):
 @app.route('/final/thread/<id>')
 def get_thread_by_id(id):
     table = get_table("threads")
-    thread = table.get_item(Key = { "id": id })
+    thread = table.get_item(Key = { "id": id })["Item"]
 
-    replies = thread["Item"]["replies"]
+    replies = thread["replies"]
     replies_list = []
 
     for i in range(len(replies)):
         reply = table.get_item(Key = { "id": replies[i]["id"] })["Item"]
         replies_list.append(reply)
 
-    return { 'thread': thread["Item"], 'replies': replies_list }
+    parent = 'None'
+    if thread["parent"] != 'None':
+        parent = table.get_item(Key = { "id": thread["parent"] })["Item"]
+
+    return { 'thread': thread, 'replies': replies_list, 'parent': parent, 'user': session["username"] }
 
 @app.route('/final/thread-addlike', methods=['POST'])
 def handle_likes():
@@ -355,7 +365,7 @@ def handle_likes():
         op_likes = op_likes + 1
         liked_by.append(session["username"])
 
-    data = { 'id': thread["id"], 'content': thread["content"], 'display_name': thread["display_name"], 'liked_by': liked_by, 'likes': like_count, 'pfp': thread["pfp"], 'source': thread["source"], 'username': thread["username"], 'replies': thread["replies"], 'reply_to': thread["reply_to"], 'date_posted': thread["date_posted"] }
+    data = { 'id': thread["id"], 'content': thread["content"], 'display_name': thread["display_name"], 'liked_by': liked_by, 'likes': like_count, 'pfp': thread["pfp"], 'source': thread["source"], 'username': thread["username"], 'replies': thread["replies"], 'reply_to': thread["reply_to"], 'date_posted': thread["date_posted"], 'parent': thread["parent"] }
     table.put_item(Item = data)
 
     member_data = { 'username': member["username"], 'banner': member["banner"], 'date_joined': member["date_joined"], 'display_name': member["display_name"], 'engagement': member["engagement"], 'likes': op_likes, 'posts': member["posts"], 'pfp': member["pfp"], 'password': member["password"] }
@@ -395,11 +405,11 @@ def handle_replies():
 
     reply_id = str(uuid.uuid4())
 
-    reply_data = { 'id': reply_id, 'username': username, 'display_name': display_name, 'pfp': pfp, 'content': content, 'likes': likes, 'liked_by': [], 'source': source, 'replies': [], 'reply_to': op, 'date_posted': get_date() }
+    reply_data = { 'id': reply_id, 'username': username, 'display_name': display_name, 'pfp': pfp, 'content': content, 'likes': likes, 'liked_by': [], 'source': source, 'replies': [], 'reply_to': op, 'date_posted': get_date(), 'parent': id }
 
     replies.append({ 'id': reply_id })
 
-    data = { 'id': id, 'username': thread["username"], 'display_name': thread["display_name"], 'pfp': thread["pfp"], 'content': thread["content"], 'likes': thread["likes"], 'liked_by': thread["liked_by"], 'source': thread["source"], 'replies': replies, 'reply_to': thread["reply_to"], 'date_posted': thread["date_posted"] }
+    data = { 'id': id, 'username': thread["username"], 'display_name': thread["display_name"], 'pfp': thread["pfp"], 'content': thread["content"], 'likes': thread["likes"], 'liked_by': thread["liked_by"], 'source': thread["source"], 'replies': replies, 'reply_to': thread["reply_to"], 'date_posted': thread["date_posted"], 'parent': thread["parent"] }
     table.put_item(Item = data)
     table.put_item(Item = reply_data)
 

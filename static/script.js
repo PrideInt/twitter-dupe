@@ -231,11 +231,66 @@ const doRenderReplies = () => {
     load('/final/thread/' + partition[partition.length - 1], renderReplies);
 }
 
+// This whole function can be refactored bc it looks so ugly right now but I'm very lazy
 const renderReplies = (response) => {
     let data = JSON.parse(response);
     let thread = data["thread"];
     let replies = data["replies"];
+    let user = data["user"];
+    let parent = data["parent"];
     sortThreads(replies);
+
+    /*
+    If a parent post exists, display it
+    */
+
+    const parentDoc = document.getElementById("parent");
+
+    if (parent != "None") {
+        let parentAttachmentDiv = "";
+        if (parent["source"] != "0") {
+            parentAttachmentDiv = `<img class="attachment" src="${parent["source"]}"></img>`;
+        }
+        let parentLikeDiv = "<p></p>";
+        if (parent["likes"] > 0) {
+            parentLikeDiv = "<p class=\"like_count\">" + parent["likes"] + "</p>";
+        }
+
+        let parentDiv = `<div class="tweet" style="background-color: #404040; width: auto; max-width: 800px; margin-bottom: 10px; border-radius: 10px;" onClick="redirect('/thread/${parent["id"]}')">
+                            <div class="tweet_content">
+                                <div class="reply_profile_picture" style="margin-top: 10px; background-image: url('${parent["pfp"]}');" onClick="redirect('/profile/${parent["username"]}')"></div>
+                                <a href="/profile/${parent["username"]}"><h2 style="display: inline-block; margin-left: 80px; font-size: 32px;">${parent["display_name"]}</h2></a>
+                                <a href="/profile/${parent["username"]}"><p style="display: inline-block; margin-left: 5px; font-size: 24px; color: grey">@${parent["username"]}</p></a>
+
+                                <div class="tweet_text">
+                                    <p>${parent["content"]}</p>
+                                </div>
+
+                                <div>
+                                    ${parentAttachmentDiv}
+
+                                    <div>
+                                        <p style=\"color: grey\">${parent["date_posted"]}</p>
+                                    </div>
+
+                                    <div>
+                                        <img class="like" src="" onClick="doAddLike('${parent["id"]}');"></img>
+                                        ${parentLikeDiv}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="hor_line"></div>
+                        </div>`;
+
+        parentDoc.innerHTML = parentDiv;
+    }
+
+    /*
+    Original post display
+    */
 
     let opId = thread["id"];
     let opPfp = thread["pfp"];
@@ -246,6 +301,9 @@ const renderReplies = (response) => {
     let opAttachment = thread["source"];
     let opDatePosted = thread["date_posted"];
 
+    /*
+    Reply box and button here. Need opId first, so that's why it's not above
+    */
     const replySection = document.getElementById("reply_section");
 
     let replySectionDiv = "<input class=\"reply_content\" id=\"reply_content\" placeholder=\"Reply here\"></input>" +
@@ -254,11 +312,16 @@ const renderReplies = (response) => {
 
     replySection.innerHTML = replySectionDiv;
 
-    const deleteButton = document.getElementById("delete_button");
+    /*
+    If the current logged in user is also the user of the post, give them a delete button
+    */
+    if (opUsername == user) {
+        const deleteButton = document.getElementById("delete_button");
 
-    let deleteButtonDiv = `<button class="signup_button" onClick="deleteThread('${opId}')" style="width: 5%; height: 3%; background-color: #664248; color: black; border-color: #8c5b57; float: right; margin-right: 30px; margin-top: 20px;">Delete</button>`;
+        let deleteButtonDiv = `<button class="signup_button" onClick="deleteThread('${opId}')" style="width: 5%; height: 3%; background-color: #664248; color: black; border-color: #8c5b57; float: right; margin-right: 30px; margin-top: 20px;">Delete</button>`;
 
-    deleteButton.innerHTML = deleteButtonDiv;
+        deleteButton.innerHTML = deleteButtonDiv;
+    }
 
     let opAttachmentDiv = "";
     if (opAttachment != "0") {
@@ -269,6 +332,9 @@ const renderReplies = (response) => {
         opLikeDiv = "<p class=\"like_count\">" + opLikes + "</p>";
     }
 
+    /*
+    Display original stuff
+    */
     const originalPost = document.getElementById("main_tweet");
 
     let opDiv = "";
@@ -296,6 +362,9 @@ const renderReplies = (response) => {
 
     originalPost.innerHTML = opDiv;
 
+    /*
+    Display replies
+    */
     const repliesDoc = document.getElementById("replies");
 
     let repliesDiv = "";
