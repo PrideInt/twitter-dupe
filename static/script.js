@@ -83,6 +83,31 @@ const logInResponse = (response) => {
     }
 }
 
+const doRenderSidebar = () => {
+    load("/loggedin", renderSidebar);
+}
+
+const renderSidebar = (response) => {
+    let loggedIn = JSON.parse(response)["logged_in"];
+
+    const sidebarDoc = document.getElementById("sidebar");
+    let sidebarDiv = "<ol>";
+    sidebarDiv += `<li class="sidebar_selection"><a href="/home"><h1>HOME</h1></a></li>`;
+
+    if (loggedIn) {
+        sidebarDiv += `<div class="hor_line"></div>
+                        <li class="sidebar_selection"><a href="/profile"><h1>PROFILE</h1></a></li>
+                        <div class="hor_line"></div>
+                        <li class="sidebar_selection"><a href="/settings"><h1>SETTINGS</h1></a></li>
+                        <div class="hor_line"></div>
+                        <li class="sidebar_selection"><a href="/logout"><h1>LOGOUT</h1></a></li>
+                    </ol>`
+    } else {
+        sidebarDiv += `</ol>`;
+    }
+    sidebarDoc.innerHTML = sidebarDiv;
+}
+
 const doRenderProfile = () => {
     let url = window.location.href;
     const partition = url.split('/');
@@ -464,7 +489,17 @@ const timeline = () => {
 
 const loadTimeline = (response) => {
     let data = JSON.parse(response);
+    let loggedIn = data["logged_in"];
     let items = data["items"];
+    sortThreads(items);
+
+    let homeTweetDoc = document.getElementById("home_tweet");
+    if (loggedIn) {
+        homeTweetDoc.innerHTML = `<h2 style="margin-left: 30px">Share your thoughts:</h2>
+                                    <input class="home_tweet_content" id="home_tweet_content">
+                                    <input class="attach_button" id="attach_button" type="file"></input>
+                                    <button class="home_tweet_button" id="home_tweet_button" onClick="post();">Thread</button>`
+    }
 
     let timeline = document.getElementById("timeline");
 

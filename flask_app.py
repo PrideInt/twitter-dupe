@@ -46,6 +46,8 @@ def profile_other(username):
 
 @app.route('/settings')
 def settings():
+    if not is_logged_in():
+        return redirect("/login")
     return render_template('settings.html')
 
 @app.route('/final/timeline')
@@ -128,6 +130,11 @@ def delete_thread():
 def handle_signup(username, password):
     table = get_table('members')
 
+    username = username.replace(' ', '')
+
+    if len(username) > 20:
+        username = username[:20]
+
     item = table.get_item(Key = { "username": username })
 
     if 'Item' in item:
@@ -139,6 +146,11 @@ def handle_signup(username, password):
 def update_signup():
     username = request.form.get("username")
     password = request.form.get("password")
+
+    username = username.replace(' ', '')
+
+    if len(username) > 20:
+        username = username[:20]
 
     table = get_table('members')
 
@@ -257,6 +269,10 @@ def apply_changes():
 
     if req_username != '':
         username = req_username
+        username = username.replace(' ', '')
+
+        if 'Item' in table.get_item(Key = { "username": username }):
+            return { 'result': 'Username already exists.' }
 
         if len(req_username) > 20:
             username = username[:20]
@@ -417,6 +433,10 @@ def handle_replies():
     members.put_item(Item = member_data)
 
     return { 'results': 'OK' }
+
+@app.route('/loggedin')
+def get_is_logged_in():
+    return { 'logged_in': is_logged_in() }
 
 def get_public_bucket():
     s3 = boto3.resource(service_name = 's3', region_name = 'us-east-1', aws_access_key_id = '', aws_secret_access_key = '')

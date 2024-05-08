@@ -17,27 +17,13 @@
                 <br>
             </center>
 
-            <div class="sidebar">
-                <ol>
-                    <li class="sidebar_selection"><a href="/home"><h1>HOME</h1></a></li>
-                    <div class="hor_line"></div>
-                    <li class="sidebar_selection"><a href="/profile"><h1>PROFILE</h1></a></li>
-                    <div class="hor_line"></div>
-                    <li class="sidebar_selection"><a href="/settings"><h1>SETTINGS</h1></a></li>
-                    <div class="hor_line"></div>
-                    <li class="sidebar_selection"><a href="/logout"><h1>LOGOUT</h1></a></li>
-                </ol>
+            <div class="sidebar" id="sidebar">
             </div>
 
             <div class="miscellaneous" id="miscellaneous">
             </div>
 
-            <div class="home_tweet">
-                <h2 style="margin-left: 30px">Share your thoughts:</h2>
-
-                <input class="home_tweet_content" id="home_tweet_content">
-                <input class="attach_button" id="attach_button" type="file"></input>
-                <button class="home_tweet_button" id="home_tweet_button" onClick="post();">Thread</button>
+            <div class="home_tweet" id="home_tweet">
             </div>
 
             <div class="timeline" id="timeline">
@@ -48,6 +34,7 @@
 
     <script src="/static/script.js"></script>
     <script>
+        doRenderSidebar();
         timeline();
         doGetSuperPopMembers();
     </script>

@@ -18,16 +18,7 @@
             <div class="profile_details" id="profile_details">
             </div>
 
-            <div class="sidebar" style="margin-top: 650px;">
-                <ol>
-                    <li class="sidebar_selection"><a href="/home"><h1>HOME</h1></a></li>
-                    <div class="hor_line"></div>
-                    <li class="sidebar_selection"><a href="/profile"><h1>PROFILE</h1></a></li>
-                    <div class="hor_line"></div>
-                    <li class="sidebar_selection"><a href="/settings"><h1>SETTINGS</h1></a></li>
-                    <div class="hor_line"></div>
-                    <li class="sidebar_selection"><a href="/logout"><h1>LOGOUT</h1></a></li>
-                </ol>
+            <div class="sidebar" id="sidebar" style="margin-top: 650px;">
             </div>
 
             <div class="profile_information" id="profile_information">
@@ -41,6 +32,7 @@
 
     <script src="/static/script.js"></script>
     <script>
+        doRenderSidebar();
         doRenderProfile();
         doRenderThreads();
     </script>
