@@ -351,7 +351,12 @@ def get_thread_by_id(id):
 
     parent = 'None'
     if thread["parent"] != 'None':
-        parent = table.get_item(Key = { "id": thread["parent"] })["Item"]
+        parent_item = table.get_item(Key = { "id": thread["parent"] })
+
+        if 'Item' in parent_item:
+            parent = table.get_item(Key = { "id": thread["parent"] })["Item"]
+        else:
+            parent = 'None'
 
     return { 'thread': thread, 'replies': replies_list, 'parent': parent, 'user': session["username"] }
 
