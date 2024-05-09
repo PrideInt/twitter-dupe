@@ -235,7 +235,7 @@ p {
     height: 50px;
     object-fit: cover;
     display: inline-block;
-    background-size: 50px;
+    background-size: cover;
     margin-right: 30px;
     cursor: pointer;
 }
@@ -284,7 +284,7 @@ p {
     height: 200px;
     object-fit: cover;
     display: inline-block;
-    background-size: 200px;
+    background-size: cover;
     margin-left: 20px;
     margin-top: 20px;
     cursor: pointer;
@@ -361,7 +361,7 @@ p {
     height: 64px;
     object-fit: cover;
     display: inline-block;
-    background-size: 64px;
+    background-size: cover;
     margin-right: 30px;
     cursor: pointer;
 }
